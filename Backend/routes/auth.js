@@ -18,15 +18,16 @@ router.post('/createUser',
     body('name', 'Name must be atleast 3 characters').isLength({ min: 3 })],
     async (req, res) => {
         //Check for errors
+        let success=false;
         const errors = await validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ success,errors: errors.array() });
         }
         //Check if the user with same email exits or not
         try {
             let user = await User.findOne({ "email": req.body.email });
             if (user) {
-                return res.status(400).json({ "error": "Sorry a user with the same e-mail already exists" });
+                return res.status(400).json({ success,"error": "Sorry a user with the same e-mail already exists" });
             }
             const salt = await bcrypt.genSalt(10);
             let securePassword = await bcrypt.hash(req.body.password, salt);
@@ -37,11 +38,12 @@ router.post('/createUser',
             })
             const data = {
                 user: {
-                    id: user.id
+                    id: user._id
                 }
             }
+            success=true;
             const authToken = jwt.sign(data, JWT_signature);
-            res.json({ authToken });
+            res.json({ success,authToken });
         }
         catch (error) {
             console.error(error.message);
@@ -58,27 +60,29 @@ router.post('/login',
     [body('password', 'Password cannot be blank').exists()],
     async (req, res) => {
         //Check for errors
+        let success=false;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ success,errors: errors.array() });
         }
         const { email, password } = req.body;
         try {
             let user = await User.findOne({ email: email });
             if (!user) {
-                return res.status(400).json({ "error": "Invalid Credentials" });
+                return res.status(400).json({ success,"error": "Invalid Credentials" });
             }
             const passwordCompare = await bcrypt.compare(password, user.password);
             if (!passwordCompare) {
-                return res.status(400).json({ "error": "Invalid Credentials" });
+                return res.status(400).json({ success,"error": "Invalid Credentials" });
             }
+            success=true;
             const data = {
                 user: {
                     id: user.id
                 }
             }
             const authToken = jwt.sign(data, JWT_signature);
-            res.json({ authToken });
+            res.json({ success,authToken });
         }
         catch (error) {
             console.error(error.message);

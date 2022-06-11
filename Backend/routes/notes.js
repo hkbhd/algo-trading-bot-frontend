@@ -11,11 +11,10 @@ const { route } = require("./auth");
 router.get('/fetchAllNotes', fetchuser, async (req, res) => {
     try {
         const notes = await Notes.find({ user: req.user.id });
-        res.json(notes);
+        return res.json(notes);
     }
     catch (error) {
-        console.error(error.message);
-        res.status(500).send("Some Error Occured");
+        return res.status(500).json({"error":"Some Error Occured"});
     }
 })
 
@@ -29,20 +28,20 @@ router.post('/addNote', fetchuser, [
 ], async (req, res) => {
     //Check for errors
     try {
-        const errors = await validationResult(req);
+        const { title, description, tag } = req.body;
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { title, description, tag } = req.body;
         const note = await new Notes({
             title, description, tag, user: req.user.id
         })
         const savedNote = await note.save();
-        res.send(note)
+        res.json(savedNote)
     }
     catch (error) {
         console.error(error.message);
-        res.status(500).send("Some Error Occured");
+        res.status(500).json({"message":"Some error occured"});
     }
 })
 
