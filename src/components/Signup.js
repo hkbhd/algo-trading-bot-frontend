@@ -13,14 +13,17 @@ const Signup = (props) => {
           alert("The passwords do not match");
           return;
         }
-        const response = await fetch("http://localhost:5000/api/auth/createUser", {
+        const response = await fetch("http://localhost:50000/api/auth/signup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa("user:admin")
             },
-            body:JSON.stringify({name:credentials.name[0],email:credentials.email[0],password:credentials.password[0]})
+            body: JSON.stringify({ username: credentials.name[0], email: credentials.email[0], password: credentials.password[0] })
         });
+
         const json=await response.json();
+
         if(json.success){
           console.log(json);
             localStorage.setItem('token',json.authToken);
@@ -32,7 +35,7 @@ const Signup = (props) => {
         }
     }
     return (
-      <div className="container" style={{border:'1px solid grey',padding:'10px',borderRadius:"10px"}}>
+        <div className="container" style={{ border: '1px solid grey', borderRadius: "10px", padding: "20px" }}>
         <h2 style={{textAlign:'center'}}>Enter your credentials to Signup!</h2>
         <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
             <div className="form-group" style={{margin:"20px"}}>
@@ -44,6 +47,7 @@ const Signup = (props) => {
                 <input required minLength={5} onChange={onChange} value={credentials.email} name="email" type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter your email" />
                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
+
             <div className="form-group" style={{margin:"20px"}}>
                 <label htmlFor="password">Password</label>
                 <input required minLength={5} onChange={onChange} value={credentials.password} name="password" type="password" className="form-control" id="password" placeholder="Enter your password" />

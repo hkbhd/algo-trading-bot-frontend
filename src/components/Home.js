@@ -1,13 +1,9 @@
-import React, { useContext } from 'react'
-import Notes from './Notes';
-import noteContext from '../context/Notes/noteContext';
+import React from 'react'
 
-const Home = (props) => {
-  const context=useContext(noteContext);
-  const {notes}=context;
+const Home = () => {
   return (
     <div >
-      <Notes showAlert={props.showAlert} notes={notes}/>
+      This is the Home Page
     </div>
   )
 }

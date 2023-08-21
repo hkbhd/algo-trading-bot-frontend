@@ -7,7 +7,6 @@ import {
 import Navbar from './components/Navbar';
 import Home from "./components/Home"
 import About from './components/About';
-import NoteState from './context/Notes/NoteState'
 import Alert from './components/Alert';
 import { useState } from 'react';
 import Login from './components/Login';
@@ -25,7 +24,6 @@ function App() {
   }
   return (
     <>
-      <NoteState>
         <Router>
           <Navbar />
           {alert && <Alert alert={alert}/>}
@@ -37,8 +35,7 @@ function App() {
               <Route exact path='/signup' element={<Signup showAlert={showAlert}/>} />
             </Routes>
           </div>
-        </Router>
-      </NoteState>
+      </Router>
     </>
   );
 }

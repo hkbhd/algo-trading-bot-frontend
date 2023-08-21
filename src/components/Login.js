@@ -6,19 +6,24 @@ const Login = (props) => {
     const onChange = (e) => {
         setCredentials({...credentials, [e.target.name]:[e.target.value]});
     }
+    //todo: make authorization secure
     const handleSubmit = async (e) => {
+
         e.preventDefault();
-        const response = await fetch("http://localhost:5000/api/auth/login", {
+        const response = await fetch("http://localhost:50000/api/auth/signin", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa("user:admin")
             },
             body:JSON.stringify({email:credentials.email[0],password:credentials.password[0]})
         });
+
         const json=await response.json();
-        if(json.success){
-            localStorage.setItem('token',json.authToken);
+
+        if (json.success) {
             history("/");
+            localStorage.setItem('token', json.authToken);
             props.showAlert("Logged in Successfully","success");
         }
         else{
@@ -26,7 +31,7 @@ const Login = (props) => {
         }
     }
     return (
-        <div className="container" style={{border:'1px solid grey',padding:'10px',borderRadius:"10px"}}>
+        <div className="container" style={{ border: '1px solid grey', padding: '10px', borderRadius: "10px", padding: "20px" }}>
         <h2 style={{textAlign:'center'}}>Enter your credentials to Login!</h2>
         <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
             <div className="form-group" style={{margin:"20px"}}>
